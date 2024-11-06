@@ -18,3 +18,8 @@ helm install vault hashicorp/vault --namespace vault
 ```bash
 kubectl port-forwarding -n vault service/vault 8200:http
 ```
+
+# Run app
+```bash
+kubectl apply -f busybox.yaml
+```
