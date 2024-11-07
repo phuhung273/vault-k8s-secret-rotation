@@ -1,3 +1,6 @@
+## Ref
+https://developer.hashicorp.com/vault/tutorials/get-started/understand-static-dynamic-secrets
+
 ## Cluster
 ```bash
 kind create cluster --config kind.yaml --name default
@@ -60,3 +63,25 @@ psql -U postgres -c "CREATE ROLE \"ro\" NOINHERIT;"
 
 psql -U postgres -c "GRANT SELECT ON ALL TABLES IN SCHEMA public TO \"ro\";"
 ```
+
+## Enable Vault database secret engine
+```bash
+export VAULT_ADDR=http://127.0.0.1:8200
+export VAULT_TOKEN=<your_token>
+
+vault secrets enable database
+```
+
+## Config database connection
+```bash
+vault write database/config/postgresql \
+  plugin_name=postgresql-database-plugin \
+  connection_url="postgresql://{{username}}:{{password}}@my-release-postgresql.default.svc.cluster.local:5432/postgres?sslmode=disable" \
+  allowed_roles=readonly \
+  username="root" \
+  password="rootpassword"
+```
+
+Result
+![screenshot](connection1.png)
+![screenshot](connection2.png)
