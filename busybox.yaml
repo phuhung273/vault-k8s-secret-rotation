@@ -13,7 +13,16 @@ spec:
     metadata:
       labels:
         app: test
+      annotations:
+        vault.hashicorp.com/agent-inject: "true"
+        vault.hashicorp.com/role: "internal-app"
+        vault.hashicorp.com/agent-inject-secret-db-creds: "database/creds/readonly"
+        vault.hashicorp.com/agent-inject-template-db-creds: |
+          {{- with secret "database/creds/readonly" -}}
+          postgres://{{ .Data.username }}:{{ .Data.password }}@postgres:5432/postgres?sslmode=disable
+          {{- end }}
     spec:
+      serviceAccountName: app
       containers:
       - image: busybox
         name: busybox

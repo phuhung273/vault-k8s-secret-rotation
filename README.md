@@ -82,11 +82,10 @@ vault write database/config/postgresql \
   password="rootpassword"
 ```
 
-Result
 ![screenshot](connection1.png)
 ![screenshot](connection2.png)
 
-## Create vault role
+## Create Vault secret engine database role
 ```bash
 vault write database/roles/readonly \
     db_name=postgresql \
@@ -95,5 +94,27 @@ vault write database/roles/readonly \
     max_ttl=24h
 ```
 
-Result
 ![screenshot](role1.png)
+
+## Create Vault k8s auth
+```bash
+vault auth enable kubernetes
+
+vault write auth/kubernetes/config kubernetes_host="https://10.96.0.1:443"
+```
+
+## Create Vault policy
+```bash
+vault policy write app policy.hcl
+```
+
+## Create Vault role
+```bash
+kubectl create sa app
+
+vault write auth/kubernetes/role/internal-app \
+      bound_service_account_names=app \
+      bound_service_account_namespaces=default \
+      policies=app \
+      ttl=24h
+```
