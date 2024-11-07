@@ -85,3 +85,15 @@ vault write database/config/postgresql \
 Result
 ![screenshot](connection1.png)
 ![screenshot](connection2.png)
+
+## Create vault role
+```bash
+vault write database/roles/readonly \
+    db_name=postgresql \
+    creation_statements=@readonly.sql \
+    default_ttl=1h \
+    max_ttl=24h
+```
+
+Result
+![screenshot](role1.png)
