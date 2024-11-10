@@ -1,0 +1,1 @@
+ALTER USER "{{name}}" PASSWORD '{{password}}';

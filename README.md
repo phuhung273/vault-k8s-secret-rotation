@@ -1,5 +1,7 @@
 ## Ref
-https://developer.hashicorp.com/vault/tutorials/get-started/understand-static-dynamic-secrets
+- https://developer.hashicorp.com/vault/tutorials/get-started/understand-static-dynamic-secrets
+- https://developer.hashicorp.com/vault/tutorials/kubernetes/kubernetes-sidecar
+- https://www.hashicorp.com/blog/refresh-secrets-for-kubernetes-applications-with-vault-agent
 
 ## Cluster
 ```bash
@@ -19,7 +21,7 @@ helm install vault hashicorp/vault --namespace vault
 
 ## Expose vault
 ```bash
-kubectl port-forwarding -n vault service/vault 8200:http
+kubectl port-forward -n vault service/vault 8200:http
 ```
 
 ## Run app
@@ -77,7 +79,7 @@ vault secrets enable database
 vault write database/config/postgresql \
   plugin_name=postgresql-database-plugin \
   connection_url="postgresql://{{username}}:{{password}}@my-release-postgresql.default.svc.cluster.local:5432/postgres?sslmode=disable" \
-  allowed_roles=readonly \
+  allowed_roles=readonly,static \
   username="root" \
   password="rootpassword"
 ```
@@ -117,4 +119,20 @@ vault write auth/kubernetes/role/internal-app \
       bound_service_account_namespaces=default \
       policies=app \
       ttl=24h
+```
+
+## Create database LOGIN user
+```basj
+kubectl exec -it my-release-postgresql-0 -- /bin/sh
+
+psql -U postgres -c "CREATE ROLE \"static\" WITH LOGIN;"
+```
+
+## Create static database role
+```bash
+vault write database/static-roles/static \
+    db_name=postgresql \
+    username=static \
+    rotation_statements=@static.sql \
+    rotation_period=1m
 ```
