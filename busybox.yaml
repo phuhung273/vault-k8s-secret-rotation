@@ -16,9 +16,9 @@ spec:
       annotations:
         vault.hashicorp.com/agent-inject: "true"
         vault.hashicorp.com/role: "internal-app"
-        vault.hashicorp.com/agent-inject-secret-db-creds: "database/creds/readonly"
+        vault.hashicorp.com/agent-inject-secret-db-creds: "database/static-creds/static"
         vault.hashicorp.com/agent-inject-template-db-creds: |
-          {{- with secret "database/creds/readonly" -}}
+          {{- with secret "database/static-creds/static" -}}
           postgres://{{ .Data.username }}:{{ .Data.password }}@postgres:5432/postgres?sslmode=disable
           {{- end }}
     spec:
@@ -29,4 +29,4 @@ spec:
         command:
         - "sh"
         - "-c"
-        - "while true; do sleep 6000; done"
+        - "while true; do cat /vault/secrets/db-creds && sleep 60; done"

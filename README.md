@@ -134,5 +134,7 @@ vault write database/static-roles/static \
     db_name=postgresql \
     username=static \
     rotation_statements=@static.sql \
-    rotation_period=1m
+    rotation_period=1h
 ```
+
+<!-- TODO: trigger rotation manually -->
