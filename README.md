@@ -137,4 +137,10 @@ vault write database/static-roles/static \
     rotation_period=1h
 ```
 
-<!-- TODO: trigger rotation manually -->
+## Manually trigger static role credentials rotation
+```bash
+curl \
+    --header "X-Vault-Token: ..." \
+    --request POST \
+    http://127.0.0.1:8200/v1/database/rotate-role/static
+```
